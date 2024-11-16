@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Love Story</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Georgia", serif;
+            background-color: black;
+            color: #f8d7da;
+            overflow-x: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .girl, .boy {
+            position: absolute;
+            bottom: 50px;
+            transition: transform 2s ease;
+        }
+
+        .girl {
+            left: 10%;
+            width: 150px;
+            height: 300px;
+            background: url('./IMG/g1.jpg') no-repeat center;
+            background-size: cover;
+        }
+
+        .boy {
+            right: 10%;
+            width: 150px;
+            height: 300px;
+            background: url('./IMG/b1.jpg') no-repeat center;
+            background-size: cover;
+        }
+
+        .love-story {
+            position: absolute;
+            top: 40%;
+            width: 100%;
+            text-align: center;
+            font-size: 20px;
+            color: blue;
+            line-height: 1.5;
+            display: none;
+            animation: textAnimation 5s ease-in-out infinite;
+        }
+
+        @keyframes textAnimation {
+            0% { opacity: 0; }
+            25% { opacity: 1; }
+            75% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .button {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background: #d63384;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .emoji-container {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .emoji {
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            animation: float 2s ease-out forwards;
+        }
+
+        @keyframes float {
+            from {
+                opacity: 0;
+                transform: translateY(100px) scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(-100px) scale(1);
+            }
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+            background: black;
+            color: white;
+            font-size: 14px;
+        }
+
+        .form-container {
+            position: absolute;
+            top: 70%;
+            width: 100%;
+            text-align: center;
+            display: none;
+        }
+
+        .form-container input, .form-container textarea {
+            padding: 10px;
+            margin: 5px;
+            width: 80%;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .rating-icons {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .rating-icons span {
+            font-size: 30px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .rating-icons span.selected {
+            color: gold;
+        }
+
+        .submit-msg {
+            display: none;
+            margin-top: 20px;
+            color: green;
+            font-size: 18px;
+        }
+
+        .reviews-count {
+            margin-top: 10px;
+            color: white;
+            font-size: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .girl, .boy {
+                width: 100px;
+                height: 200px;
+            }
+
+            .love-story {
+                font-size: 16px;
+            }
+
+            .button {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+
+            .emoji {
+                font-size: 30px;
+            }
+
+            .form-container input, .form-container textarea {
+                width: 90%;
+            }
+
+            footer {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .girl, .boy {
+                width: 80px;
+                height: 150px;
+            }
+
+            .love-story {
+                font-size: 14px;
+            }
+
+            .button {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .emoji {
+                font-size: 25px;
+            }
+
+            .form-container input, .form-container textarea {
+                width: 95%;
+            }
+
+            footer {
+                font-size: 10px;
+            }
+        }
+
+        /* Video Container */
+        .video-container {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 600px;
+            z-index: 0;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="girl"></div>
+        <div class="boy"></div>
+
+        <!-- Video Section -->
+        <div class="video-container">
+            <video controls>
+                <source src="./IMG/v1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="love-story" id="loveStory"></div>
+    </div>
+
+    <button class="button" onclick="startInteraction()">Start Interaction</button>
+
+    <div class="emoji-container" id="emojiContainer">
+        <span class="emoji" onclick="floatEmoji('🥰')">🥰</span>
+        <span class="emoji" onclick="floatEmoji('😍')">😍</span>
+        <span class="emoji" onclick="floatEmoji('❤️')">❤️</span>
+        <span class="emoji" onclick="floatEmoji('💔')">💔</span>
+        <span class="emoji" onclick="floatEmoji('😢')">😢</span>
+    </div>
+
+    <div class="form-container" id="formContainer">
+        <h2>Share Your Thoughts</h2>
+        <form id="userForm">
+            <input type="text" id="name" placeholder="Your Name" required><br>
+            <textarea id="review" rows="4" placeholder="Tell us your feelings or thoughts..." required></textarea><br>
+            <div class="rating-icons" id="ratingIcons">
+                <span onclick="selectRating(1)">💔</span>
+                <span onclick="selectRating(2)">💔💔</span>
+                <span onclick="selectRating(3)">❤️</span>
+                <span onclick="selectRating(4)">❤️❤️</span>
+                <span onclick="selectRating(5)">❤️❤️❤️</span>
+            </div>
+            <input type="hidden" id="rating" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div class="submit-msg" id="submitMsg">Thank you for your feedback!</div>
+        <div class="reviews-count" id="reviewsCount">Reviews: 0</div>
+    </div>
+
+    <footer>
+        &copy; 2024 | Created by Zohaib Ali
+    </footer>
+
+    <script>
+        let loveStoryLines = [
+            "She turned away, the camera capturing her smile, leaving him behind with a cigarette in hand.",
+            "The bond they shared once seemed unbreakable, but life had its own plans.",
+            "He looked at her from afar, wondering if things could have been different.",
+            "As time passed, the world moved on, but their memories stayed like echoes in the heart."
+        ];
+
+        let currentLine = 0;
+        let reviewCount = 0;
+
+        function startInteraction() {
+            document.querySelector('.love-story').style.display = 'block';
+            document.querySelector('.girl').style.transform = `translateX(${Math.random() * 500 - 250}px) translateY(${Math.random() * 500 - 250}px)`;
+            document.querySelector('.boy').style.transform = `translateX(${Math.random() * 500 - 250}px) translateY(${Math.random() * 500 - 250}px)`;
+
+            setInterval(() => {
+                document.querySelector('.love-story').innerText = loveStoryLines[currentLine];
+                currentLine = (currentLine + 1) % loveStoryLines.length;
+            }, 4000);
+        }
+
+        function floatEmoji(emoji) {
+            const emojiElement = document.createElement('div');
+            emojiElement.classList.add('floating-emoji');
+            emojiElement.innerText = emoji;
+            document.body.appendChild(emojiElement);
+
+            const xPos = Math.random() * window.innerWidth;
+            const yPos = Math.random() * window.innerHeight;
+
+            emojiElement.style.left = `${xPos}px`;
+            emojiElement.style.top = `${yPos}px`;
+
+            setTimeout(() => {
+                emojiElement.remove();
+            }, 2000);
+        }
+
+        function selectRating(rating) {
+            document.getElementById('rating').value = rating;
+
+            const ratingIcons = document.querySelectorAll('.rating-icons span');
+            ratingIcons.forEach((icon, index) => {
+                icon.classList.toggle('selected', index < rating);
+            });
+        }
+
+        document.getElementById('userForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const review = document.getElementById('review').value;
+            const rating = document.getElementById('rating').value;
+
+            reviewCount++;
+            document.getElementById('reviewsCount').innerText = `Reviews: ${reviewCount}`;
+
+            document.getElementById('submitMsg').style.display = 'block';
+
+            setTimeout(() => {
+                document.getElementById('submitMsg').style.display = 'none';
+                document.getElementById('formContainer').style.display = 'none'; // Hide form after submit
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
